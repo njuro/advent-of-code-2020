@@ -1,40 +1,22 @@
-import utils.readInputLines
+import utils.readInputBlock
 
 /** [https://adventofcode.com/2020/day/4] */
 class PassportValidation : AdventOfCodeTask {
 
     override fun run(part2: Boolean): Any {
-        val detected = mutableSetOf<String>()
         val required = setOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
-        var currentValid = true
-        var validCounter = 0
-
-        for (line in readInputLines("4.txt")) {
-            if (line.isNotBlank()) {
-                line.split(" ").forEach { token ->
-                    val (key, value) = token.split(":")
-                    detected.add(key)
-                    if (part2 && !validateData(key, value)) {
-                        currentValid = false
-                    }
-                }
-            } else {
-                if (detected.containsAll(required)) {
-                    if (!part2 || currentValid) {
-                        validCounter++
-                    }
-                }
-
-                currentValid = true
-                detected.clear()
+        val passports = readInputBlock("4.txt").split("\n\n")
+            .map { block ->
+                block.replace("\n", " ").split(" ")
+                    .map { data ->
+                        val (key, value) = data.split(":")
+                        key to value
+                    }.toMap()
             }
-        }
 
-        if (currentValid) {
-            validCounter++
+        return passports.count { passport ->
+            passport.keys.containsAll(required) && passport.all { !part2 || validateData(it.key, it.value) }
         }
-
-        return validCounter
     }
 
     private fun validateData(key: String, value: String): Boolean {
