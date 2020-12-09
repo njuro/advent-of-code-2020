@@ -43,6 +43,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(GameLoop(), 1801, 2060)
     }
 
+    @Test
+    fun day9() {
+        runTaskTest(FindSumYetAgain(), 257342611L, 35602097L)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
