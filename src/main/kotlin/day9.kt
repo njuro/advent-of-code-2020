@@ -16,25 +16,19 @@ class FindSumYetAgain : AdventOfCodeTask {
     }
 
     private fun findSum(input: List<Long>, invalid: Long): Long {
-        for (i in input.indices) {
-            val sequence = mutableListOf(input[i])
-            var j = i
-            while (true) {
-                val sum = sequence.sum()
-                if (sum == invalid) {
-                    return sequence.minOrNull()!! + sequence.maxOrNull()!!
-                }
-                if (sum > invalid) {
-                    break
-                }
-                sequence.add(input[++j])
+        var index = 0
+        val sequence = mutableListOf<Long>()
+        do {
+            sequence.add(input[index++])
+            while (sequence.sum() > invalid) {
+                sequence.removeFirst()
             }
-        }
+        } while (sequence.sum() != invalid)
 
-        throw IllegalStateException("Sequence not found")
+        return sequence.minOrNull()!! + sequence.maxOrNull()!!
     }
 }
 
 fun main() {
-    println(FindSumYetAgain().run(part2 = false))
+    println(FindSumYetAgain().run(part2 = true))
 }
