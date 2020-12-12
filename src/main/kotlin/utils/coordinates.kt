@@ -51,6 +51,14 @@ data class Coordinate(val x: Int, val y: Int) {
     fun adjacent(offset: Boolean = false): Map<Direction, Coordinate> {
         return Direction.values().associateWith { move(it, offset) }
     }
+
+    operator fun plus(other: Coordinate): Coordinate {
+        return Coordinate(x + other.x, y + other.y)
+    }
+
+    operator fun minus(other: Coordinate): Coordinate {
+        return Coordinate(x - other.x, y - other.y)
+    }
 }
 
 fun Map<Coordinate, Char>.minX(): Int {
