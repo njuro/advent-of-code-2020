@@ -8,8 +8,8 @@ class Buses : AdventOfCodeTask {
         val buses = departures.split(",").map { if (it == "x") 1 else it.toLong() }
 
         return if (part2) {
-            val dividers = buses.filter { it != 1L }.toLongArray()
-            val modulos = buses.mapIndexedNotNull { index, bus ->
+            val divisors = buses.filter { it != 1L }.toLongArray()
+            val remainders = buses.mapIndexedNotNull { index, bus ->
                 if (bus == 1L) null else {
                     var mod = bus - index
                     while (mod < 0) {
@@ -18,7 +18,7 @@ class Buses : AdventOfCodeTask {
                     mod
                 }
             }.toLongArray()
-            chineseRemainder(dividers, modulos)
+            chineseRemainder(divisors, remainders)
         } else {
             var current = start.toInt()
             var firstBus: Long? = null
@@ -30,20 +30,17 @@ class Buses : AdventOfCodeTask {
         }
     }
 
-    // Code for Chinese Remainder Theorem calculation taken from https://rosettacode.org/wiki/Chinese_remainder_theorem#Kotlin
-    // Adapted from Ints to Longs to prevent overflow
+    // Code for Chinese Remainder Theorem calculation adapted from https://rosettacode.org/wiki/Chinese_remainder_theorem#Kotlin
 
-    private fun chineseRemainder(n: LongArray, a: LongArray): Long {
-        val prod = n.fold(1L) { acc, i -> acc * i }
-        var sum = 0L
-        for (i in n.indices) {
-            val p = prod / n[i]
-            sum += a[i] * multInv(p, n[i]) * p
-        }
-        return sum % prod
+    private fun chineseRemainder(divisors: LongArray, remainders: LongArray): Long {
+        val product = divisors.fold(1L) { acc, i -> acc * i }
+        return divisors.zip(remainders).map { (divisor, remainder) ->
+            val productOfOthers = product / divisor
+            remainder * modularMultiplicativeInverse(productOfOthers, divisor) * productOfOthers
+        }.sum() % product
     }
 
-    private fun multInv(a: Long, b: Long): Long {
+    private fun modularMultiplicativeInverse(a: Long, b: Long): Long {
         if (b == 1L) return 1
         var aa = a
         var bb = b
