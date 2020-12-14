@@ -14,7 +14,7 @@ class BinaryStrings : AdventOfCodeTask {
             if (command == "mask") {
                 mask = value
             } else {
-                val (address) = Regex("mem\\[(\\d+)\\]").matchEntire(command)!!.destructured
+                val (address) = Regex("mem\\[(\\d+)]").matchEntire(command)!!.destructured
                 val binary = if (part2) address.toBinaryList() else value.toBinaryList()
                 mask.forEachIndexed { index, bit ->
                     binary[index] = when {
