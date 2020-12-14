@@ -68,6 +68,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(Buses(), 1895L, 840493039281088L)
     }
 
+    @Test
+    fun day14() {
+        runTaskTest(BinaryStrings(), 11612740949946L, 3394509207186L)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
