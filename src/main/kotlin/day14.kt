@@ -3,10 +3,8 @@ import utils.readInputLines
 /** [https://adventofcode.com/2020/day/14] */
 class BinaryStrings : AdventOfCodeTask {
 
-    private val memory = mutableMapOf<Long, Long>().withDefault { 0L }
-
     override fun run(part2: Boolean): Any {
-        memory.clear()
+        val memory = mutableMapOf<Long, Long>().withDefault { 0L }
         var mask = ""
 
         readInputLines("14.txt").forEach {
