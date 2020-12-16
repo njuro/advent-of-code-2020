@@ -35,10 +35,9 @@ class Tickets : AdventOfCodeTask {
             }.map(Field::name).toMutableList()
         }.sortedBy { (_, fields) -> fields.size }
 
-        val determined = mutableSetOf<String>()
         val valid = candidates.map { (index, fields) ->
-            val field = fields.first { f -> f !in determined }
-            determined.add(field)
+            val field = fields.first()
+            candidates.forEach { (_, f) -> f.remove(field) }
             index to field
         }.toMap()
 
