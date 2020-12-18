@@ -88,6 +88,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(Cubes(), 223, 1884)
     }
 
+    @Test
+    fun day18() {
+        runTaskTest(Equations(), 86311597203806L, 276894767062189L)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
