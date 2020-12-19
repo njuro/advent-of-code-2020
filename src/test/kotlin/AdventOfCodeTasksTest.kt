@@ -93,6 +93,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(Equations(), 86311597203806L, 276894767062189L)
     }
 
+    @Test
+    fun day19() {
+        runTaskTest(RegularExpressions(), 285, 412)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
