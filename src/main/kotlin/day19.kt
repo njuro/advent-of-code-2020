@@ -38,7 +38,7 @@ class RegularExpressions : AdventOfCodeTask {
         if (part2) {
             patterns[8] = "(${patterns[42]})+"
             patterns[11] = "(" + (1..4).joinToString("|") {
-                "(${patterns[42]!!.repeat(it)}${patterns[31]!!.repeat(it)})"
+                "(${patterns[42]!!}{$it}${patterns[31]!!}{$it})"
             } + ")"
             patterns[0] = "${patterns[8]}${patterns[11]}"
         }
