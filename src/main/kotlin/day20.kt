@@ -1,13 +1,12 @@
 import utils.Coordinate
 import utils.Direction
 import utils.readInputBlock
-import utils.toStringRepresentation
 import kotlin.math.sqrt
 
 typealias Tile = Map<Coordinate, Char>
 
 /** [https://adventofcode.com/2020/day/20] */
-class Day20Fix : AdventOfCodeTask {
+class Tiles : AdventOfCodeTask {
     private var maxCoordinate = 9
 
     override fun run(part2: Boolean): Any {
@@ -20,18 +19,7 @@ class Day20Fix : AdventOfCodeTask {
         }.toMap()
         val dimension = sqrt(tiles.size.toDouble()).toInt()
 
-        val variations = tiles.map { (key, tile) ->
-            val transformations = mutableSetOf<Tile>()
-            var current = tile
-            repeat(4) {
-                current = current.rotate()
-                transformations.add(current)
-                transformations.add(current.flipVertically())
-                transformations.add(current.flipHorizontally())
-            }
-            key to transformations
-        }.toMap()
-
+        val variations = tiles.mapValues { it.value.transformations() }
         val edges = variations.mapValues { (_, tiles) -> tiles.flatMap { it.allEdges() }.toSet() }
 
         val candidates = tiles.map { (key, tile) ->
@@ -72,7 +60,60 @@ class Day20Fix : AdventOfCodeTask {
             grid.add(current)
         }
 
-        return -1
+        val cleaned = grid.map { it.second.removeEdges() }
+        val ordered = mutableListOf<Tile>()
+        (0 until (dimension * dimension) step dimension).forEach {
+            ordered.addAll(cleaned.subList(it, it + dimension).reversed())
+        }
+        maxCoordinate -= 2
+        
+        val image = mutableMapOf<Coordinate, Char>()
+        var column = 0
+        var row = 0
+        ordered.forEach { tile ->
+            val shifted = tile.mapKeys { (coordinate, _) ->
+                Coordinate(
+                    x = coordinate.x + column * (maxCoordinate + 1),
+                    y = coordinate.y + row * (maxCoordinate + 1)
+                )
+            }
+            if (shifted.keys.intersect(image.keys).isNotEmpty()) {
+                throw IllegalArgumentException()
+            }
+            image.putAll(shifted)
+            column++
+            if (column == dimension) {
+                column = 0
+                row++
+            }
+        }
+
+        maxCoordinate = (dimension * (maxCoordinate + 1)) - 1
+        val total = image.values.count { it == '#' }
+        return total - image.transformations().mapNotNull { transformation ->
+            val waves = transformation.filterValues { it == '#' }
+            val dragons = waves.keys.count { coordinate ->
+                val body = setOf(
+                    coordinate.copy(x = coordinate.x + 5),
+                    coordinate.copy(x = coordinate.x + 6),
+                    coordinate.copy(x = coordinate.x + 11),
+                    coordinate.copy(x = coordinate.x + 12),
+                    coordinate.copy(x = coordinate.x + 17),
+                    coordinate.copy(x = coordinate.x + 18),
+                    coordinate.copy(x = coordinate.x + 19),
+                    coordinate.copy(x = coordinate.x + 18, y = coordinate.y - 1),
+                    coordinate.copy(x = coordinate.x + 1, y = coordinate.y + 1),
+                    coordinate.copy(x = coordinate.x + 4, y = coordinate.y + 1),
+                    coordinate.copy(x = coordinate.x + 7, y = coordinate.y + 1),
+                    coordinate.copy(x = coordinate.x + 10, y = coordinate.y + 1),
+                    coordinate.copy(x = coordinate.x + 13, y = coordinate.y + 1),
+                    coordinate.copy(x = coordinate.x + 16, y = coordinate.y + 1),
+                )
+                waves.keys.containsAll(body)
+            }
+
+            if (dragons > 0) dragons else null
+        }.first() * 15
     }
 
     private fun Tile.edge(direction: Direction) = when (direction) {
@@ -96,8 +137,6 @@ class Day20Fix : AdventOfCodeTask {
 
     private fun Tile.allEdges() = setOf(topEdge(), rightEdge(), bottomEdge(), leftEdge())
 
-    private fun Tile.layout() = toStringRepresentation(true, separator = "")
-
     private fun Tile.rotate() = (0..maxCoordinate).flatMap { x ->
         (0..maxCoordinate).map { y ->
             Coordinate(x, y) to get(Coordinate(maxCoordinate - y, x))!!
@@ -108,11 +147,27 @@ class Day20Fix : AdventOfCodeTask {
         coordinate.copy(y = maxCoordinate - coordinate.y)
     }
 
-    private fun Tile.flipHorizontally() = mapKeys { (coordinate, _) ->
-        coordinate.copy(x = maxCoordinate - coordinate.x)
+    private fun Tile.removeEdges() =
+        filterKeys { it.x != 0 && it.x != maxCoordinate && it.y != 0 && it.y != maxCoordinate }.mapKeys {
+            Coordinate(
+                it.key.x - 1,
+                it.key.y - 1
+            )
+        }
+
+    private fun Tile.transformations(): Set<Tile> {
+        val transformations = mutableSetOf<Tile>()
+        var current = this
+        repeat(4) {
+            current = current.rotate()
+            transformations.add(current)
+            transformations.add(current.flipVertically())
+        }
+
+        return transformations
     }
 }
 
 fun main() {
-    print(Day20Fix().run(part2 = true))
+    println(Tiles().run(part2 = true))
 }

@@ -98,6 +98,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(RegularExpressions(), 285, 412)
     }
 
+    @Test
+    fun day20() {
+        runTaskTest(Tiles(), 8581320593371L, 2031)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
