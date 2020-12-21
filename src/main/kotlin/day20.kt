@@ -50,27 +50,23 @@ class Tiles : AdventOfCodeTask {
         }
 
         val start = candidates.filterValues { it.keys == setOf(Direction.LEFT, Direction.DOWN) }.keys.first()
-        val grid = mutableListOf(start to tiles[start]!!)
+        val grid = mutableListOf(start to tiles[start]!!.flipHorizontally())
         var current = grid.first()
         var rowStart = current
         while (grid.size != tiles.size) {
             val index = grid.size % dimension
             rowStart = if (index == 1) current else rowStart
-            current = if (index == 0) resolveNext(rowStart, Direction.DOWN) else resolveNext(current, Direction.LEFT)
+            current = if (index == 0) resolveNext(rowStart, Direction.DOWN) else resolveNext(current, Direction.RIGHT)
             grid.add(current)
         }
 
         val cleaned = grid.map { it.second.removeEdges() }
-        val ordered = mutableListOf<Tile>()
-        (0 until (dimension * dimension) step dimension).forEach {
-            ordered.addAll(cleaned.subList(it, it + dimension).reversed())
-        }
         maxCoordinate -= 2
-        
+
         val image = mutableMapOf<Coordinate, Char>()
         var column = 0
         var row = 0
-        ordered.forEach { tile ->
+        cleaned.forEach { tile ->
             val shifted = tile.mapKeys { (coordinate, _) ->
                 Coordinate(
                     x = coordinate.x + column * (maxCoordinate + 1),
@@ -143,8 +139,8 @@ class Tiles : AdventOfCodeTask {
         }
     }.toMap()
 
-    private fun Tile.flipVertically() = mapKeys { (coordinate, _) ->
-        coordinate.copy(y = maxCoordinate - coordinate.y)
+    private fun Tile.flipHorizontally() = mapKeys { (coordinate, _) ->
+        coordinate.copy(x = maxCoordinate - coordinate.x)
     }
 
     private fun Tile.removeEdges() =
@@ -161,7 +157,7 @@ class Tiles : AdventOfCodeTask {
         repeat(4) {
             current = current.rotate()
             transformations.add(current)
-            transformations.add(current.flipVertically())
+            transformations.add(current.flipHorizontally())
         }
 
         return transformations
