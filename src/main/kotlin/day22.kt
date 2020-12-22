@@ -15,27 +15,27 @@ class CardGame : AdventOfCodeTask {
         while (player1.isNotEmpty() && player2.isNotEmpty()) {
             if (seen.contains(player1 to player2)) {
                 return 1 to -1
+            }
+            
+            seen.add(player1.toList() to player2.toList())
+            val player1card = player1.removeFirst()
+            val player2card = player2.removeFirst()
+            winner = if (recursive && player1.size >= player1card && player2.size >= player2card) {
+                play(
+                    player1.toMutableList().subList(0, player1card),
+                    player2.toMutableList().subList(0, player2card),
+                    recursive
+                ).first
             } else {
-                seen.add(player1.toList() to player2.toList())
-                val player1card = player1.removeFirst()
-                val player2card = player2.removeFirst()
-                winner = if (recursive && player1.size >= player1card && player2.size >= player2card) {
-                    play(
-                        player1.toMutableList().subList(0, player1card),
-                        player2.toMutableList().subList(0, player2card),
-                        recursive
-                    ).first
-                } else {
-                    if (player1card > player2card) 1 else 2
-                }
+                if (player1card > player2card) 1 else 2
+            }
 
-                if (winner == 1) {
-                    player1.add(player1card)
-                    player1.add(player2card)
-                } else {
-                    player2.add(player2card)
-                    player2.add(player1card)
-                }
+            if (winner == 1) {
+                player1.add(player1card)
+                player1.add(player2card)
+            } else {
+                player2.add(player2card)
+                player2.add(player1card)
             }
         }
 
