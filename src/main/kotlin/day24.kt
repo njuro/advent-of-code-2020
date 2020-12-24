@@ -16,19 +16,13 @@ class HexGrid : AdventOfCodeTask {
 
     override fun run(part2: Boolean): Any {
         var flipped = mutableSetOf<CubeCoordinate>()
+        val pattern = Regex("(sw|se|nw|ne|w|e)")
         readInputLines("24.txt").forEach { instructions ->
-            var last = ""
-            val coordinate = instructions.map(Char::toString).fold(CubeCoordinate(0, 0, 0)) { current, c ->
-                if (c in setOf("s", "n")) {
-                    current.also {
-                        last = c
-                    }
-                } else {
-                    current.adjacent()["$last$c"]!!.also {
-                        last = ""
-                    }
+            val coordinate = pattern.findAll(instructions)
+                .map(MatchResult::value)
+                .fold(CubeCoordinate(0, 0, 0)) { current, direction ->
+                    current.adjacent()[direction]!!
                 }
-            }
             if (coordinate in flipped) {
                 flipped.remove(coordinate)
             } else {
