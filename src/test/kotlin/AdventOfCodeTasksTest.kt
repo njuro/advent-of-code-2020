@@ -123,6 +123,11 @@ class AdventOfCodeTasksTest {
         runTaskTest(HexGrid(), 360, 3924)
     }
 
+    @Test
+    fun day25() {
+        runTaskTest(UnlockCode(), 11707042L, 11707042L)
+    }
+
     private fun runTaskTest(task: AdventOfCodeTask, part1Result: Any, part2Result: Any) {
         assertEquals(part1Result, task.run())
         assertEquals(part2Result, task.run(part2 = true))
